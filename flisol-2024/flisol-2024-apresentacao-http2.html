@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>flisol-2024-apresentacao-http2.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="htpt2-performance">HTPT/2: +Performance</h1>
+<p><font size="3">versão 1.1</font></p>
+<p><img src="imgs/flisol.png" alt="alt Flisol" title="FliSol"></p>
+<ul>
+<li><a href="#htpt2-performance">HTPT/2: +Performance</a>
+<ul>
+<li><a href="#apresenta%C3%A7%C3%A3o-pessoal">Apresentação Pessoal</a></li>
+<li><a href="#hist%C3%B3rico">Histórico</a></li>
+<li><a href="#onde-est%C3%A1-no-http-no-modelo-osi">Onde está no HTTP no modelo OSI?</a></li>
+<li><a href="#dados-sobre-o-uso-do-http">+Dados sobre o uso do HTTP</a></li>
+<li><a href="#suporte-dos-web-browsers-ao-http2">Suporte dos Web browsers ao HTTP/2</a></li>
+<li><a href="#anatomia-do-http11">Anatomia do HTTP/1.1</a></li>
+<li><a href="#forma-de-transmiss%C3%A3o-de-dados">Forma de transmissão de dados</a></li>
+<li><a href="#frames">Frames</a></li>
+<li><a href="#compara%C3%A7%C3%B5es-de-desempenho">Comparações de desempenho</a></li>
+<li><a href="#o-que-o-http2-n%C3%A3o-resolve">O que o HTTP/2 não resolve</a></li>
+<li><a href="#recursos-para-identifica%C3%A7%C3%A3o-de-suporte-ao-http2">Recursos para Identificação de suporte ao HTTP/2</a></li>
+<li><a href="#implementa%C3%A7%C3%B5es">Implementações</a></li>
+<li><a href="#conformidade">Conformidade</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="apresenta%C3%A7%C3%A3o-pessoal">Apresentação Pessoal</h2>
+<p><font size="2">Sou o Eduardo Vieira, Analista Programador. Considero-me +1 curioso da Computação desde 2004. Trabalhei no desenvolvimento de vários sistemas desde orgão distrital, federal e para instituição privada com linguagens como Java, Groovy, PHP, Javascript, PL/SQL, Shell Script, AWK <i>et al</i>, além de banco de dados como MySQL, Oracle <i>et al</i>. Ex-docente do IFB. Atualmente trabalho na TI do sistema bancário entre os projetos: o PIX. Já precisei escovar muitos bits para resolver problemas de performance ou de baixo nível.</font></p>
+<p>Telegram, Twitter <i>et al</i>: <b>@eduardoenemark</b>.
+E-mail: <b>eduardoenemark@gmail.com</b></p>
+<hr>
+<h2 id="hist%C3%B3rico">Histórico</h2>
+<blockquote>
+<p><em><strong>”HTTP (HyperText Transfer Protocol) is the underlying protocol of the World Wide Web. Developed by Tim Berners-Lee and his team between 1989-1991…”</strong></em>
+Developer Mozilla<sup><a href="#1">1</a></sup></p>
+</blockquote>
+<p>==Internet != World Wide Web==.
+|-&gt;  Internet é TCP/IP, enquanto que Web é a sua parte visível, de fácil acesso.<sup><a href="#2">2</a></sup></p>
+<ul>
+<li><strong>HTTP/0.9 (<em>~Ago/1991</em>): Simples em forma:</strong> sem headers, status ou error codes, URL basicamente referenciado o caminho do documento HTML. Apenas GET:</li>
+</ul>
+<blockquote>
+<p>GET /mydoc.html</p>
+</blockquote>
+<p><em>Response:</em></p>
+<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+  A very simple HTML page
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</div></code></pre>
+<ul>
+<li><strong>HTTP/1.0 (<a href="https://www.rfc-editor.org/rfc/rfc1945.html">RFC 1945</a>: <em>~Mai/1996</em>)<sup><a href="#1">1</a></sup>:</strong> Redesenhado com methods, headers, status code, version information no line e suporte a outros tipos de arquivos, body com suporte a binary. Praticamente próximo dos dias de hoje:</li>
+</ul>
+<pre class="hljs"><code><div>GET /mypage.html HTTP/1.0
+User-Agent: NCSA_Mosaic/2.0 (Windows 3.1)
+
+200 OK
+Date: Tue, 15 Nov 1994 08:12:31 GMT
+Server: CERN/3.0 libwww/2.17
+Content-Type: text/html
+<span class="hljs-tag">&lt;<span class="hljs-name">HTML</span>&gt;</span>
+A page with an image
+  <span class="hljs-tag">&lt;<span class="hljs-name">IMG</span> <span class="hljs-attr">SRC</span>=<span class="hljs-string">"/myimage.gif"</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">HTML</span>&gt;</span>
+</div></code></pre>
+<p><em>Response:</em></p>
+<pre class="hljs"><code><div>GET /myimage.gif HTTP/1.0
+User-Agent: NCSA_Mosaic/2.0 (Windows 3.1)
+
+200 OK
+Date: Tue, 15 Nov 1994 08:12:32 GMT
+Server: CERN/3.0 libwww/2.17
+Content-Type: text/gif
+(image content)
+</div></code></pre>
+<ul>
+<li><strong>HTTP/1.1 (<a href="https://www.rfc-editor.org/rfc/rfc2068.html">RFC 2068</a>: <em>~Jan/1997</em>):<sup><a href="#1">1</a></sup></strong> Melhorou o HTTP/1.0 com acréscimo como reutilização de conexão, persistência (keep-alives), pipelining (esquecido), chunked, cache control e novos headers como encoding, content accept, host e securities (CORS: Cross-Origin Resource Sharing e CSP: Content Security Policy).</li>
+</ul>
+<blockquote>
+<p><strong>Temos um HTTP na versão 1.1 muito bem funcional e conhecido na Web, além de padrões de desenvolvimento como SOA (...) e REST (<em>Representational State Transfer</em>) construídos sobre ele <img class="emoji" alt="smiley" src="data:image/png;base64,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" />, porém não tão performático <img class="emoji" alt="cry" src="data:image/png;base64,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" />.</strong></p>
+</blockquote>
+<ul>
+<li>
+<p><strong>Tecnologias entre versões do HTTP:</strong> SSL da Netscape em 1994 para um HTTP +seguro que depois virou o TLS, Server-sent events. Ajax, WebSocket <em>et al</em>.</p>
+</li>
+<li>
+<p><strong>HTTP/2.0 (<a href="https://www.rfc-editor.org/rfc/rfc7540.html">RFC 7540</a>: <em>Mai/2015</em>):<sup><a href="#1">1</a></sup></strong> É antecedido pelo protocolo experimental SPDY (pronuncia <em>&quot;speedy&quot;</em>) desenhado pelos engenheiros Mike Belshe e Robert Peon da Google em 2009. Tinha um desempenho 64% melhor no quesito <em>load time</em>. Executava sobre o HTTP.<sup><a href="#2">2</a></sup> O foco do SPDY era tratar as questões de performance existentes no HTTP/1.1. Surgem conceitos aplicados deste experimento de protocolo:</p>
+<ul>
+<li><em>Multiplexed streams</em>;</li>
+<li><em>Request priorization</em>; e</li>
+<li><em>Header compression</em>.</li>
+</ul>
+<p>No redesenho do HTTP na versão 2 passa a ser um protocolo +binário do que textual, +multiplexado do que síncrono e acréscimos:</p>
+<ul>
+<li><em>Flow Control</em>;</li>
+<li><em>Stream priorization</em>; e</li>
+<li><em>Server push</em>.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>SPDY implementou conceitos do TCP no HTTP utilizando multiplexação de mensagem.</p>
+</blockquote>
+<h2 id="onde-est%C3%A1-no-http-no-modelo-osi">Onde está no HTTP no modelo OSI?</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/osi-model.png" alt="osi model"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>The transport layers of internet traffic</em><sup><a href="#2">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h2 id="dados-sobre-o-uso-do-http">+Dados sobre o uso do HTTP</h2>
+<p>Tenha em mente que tais estatísticas citadas podem variar em comparação a outras conforme o conjunto de domínios observados ou parte da Web. Logo estas estatísticas e outras apenas dão uma noção imediata seja de uso ou demais métricas vinculadas ao protocolo.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/total-kilobytes.png" alt="total kilobytes"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Total de Kilobytes por Página</em><sup><a href="#3">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/total-requests.png" alt="total requests"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Resources por página</em><sup><a href="#3">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/recorte-uso-http2.png" alt="recorte de uso http2"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Recorte do Uso do HTTP/2</em><sup><a href="#4">4</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h2 id="suporte-dos-web-browsers-ao-http2">Suporte dos Web browsers ao HTTP/2</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/suporte-browser-http2.png" alt="recorte de uso http2"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Suporte HTTP/2 nos web browsers</em><sup><a href="#5">5</a></sup></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/timeline-versions-browsers-support-http2.png" alt="recorte de uso http2"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Timeline da versão com suporte ao HTTP/2</em><sup><a href="#5">5</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h2 id="anatomia-do-http11">Anatomia do HTTP/1.1</h2>
+<p>O HTTP/1 é um protocolo textual composto de 3 partes: <em>Start line</em>, <em>headers</em> e <em>body</em> separadas por CRLF (<em>Carriage Return</em>, byte 13, + <em>Line Feed</em>, byte 10).<sup><a href="#6">6</a></sup> Os <em>headers</em> e <em>body</em> formam um <em>entity</em>, entidade. O que o torna um protocolo simples. No HTTP/2 tais partes continuam as mesmas.</p>
+<ul>
+<li><em><strong>Start line</strong></em>: Para o <em>request</em> significa <em>&quot;o que fazer&quot;</em>, enquanto que para o <em>response</em> <em>&quot;o que aconteceu&quot;</em>.</li>
+<li><em><strong>Headers</strong></em>: Consiste de campos de nome e valor separado por dois pontos.</li>
+<li><em><strong>Body</strong></em>: É o conteúdo da entidade/mensagem.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/anatomia-http1.png" alt="anatomia HTTP/1.1"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Anatomia do HTTP/1.1</em><sup><a href="#6">6</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h2 id="forma-de-transmiss%C3%A3o-de-dados">Forma de transmissão de dados</h2>
+<p>A conexão no HTTP/1.1 é sincrona do tipo <em>request-and-response</em> (<em>blocking</em>), logo o ganho na performance está em multiplas conexões em paralelo e adoção de caches/CDN (<em>Content Delivery Network</em>).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/http1-multiple-parallel-connections.png" alt="HTTP/1.1: multiplas conexões em paralelo"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>HTTP/1.1: Multiplas conexões em paralelo</em><sup><a href="#2">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>A <a href="https://www.rfc-editor.org/rfc/rfc2616.html">RFC 2616</a>, Jun/1999, orienta não mais do 2 conexões para qualquer servidor ou proxy para clientes que persistam a conexão. Esta premissa não se sustentou. Então na <a href="https://www.rfc-editor.org/rfc/rfc7230.html">RFC 7230</a>, Jun/2014, orienta que o cliente seja ponderante com o uso dos recursos no sentido de evitar congestionamentos, sobrecargas ou causar um <em>Denial of Service</em>.</p>
+<p>Os atuais web browser tendem a limitar até 6 conexões simultâneas por domínio. Então se uma páginda da Web fizer referência a recursos que estão em outros domínio, logo serão acrescentadas novas conexões. No Firefox na propriedade <em>network.http.max-persistent-connections-per-server</em> possui valor 6 por padrão.</p>
+<p>A transmissão de dados no HTTP/2 se dá por um conjunto de <em>streams</em> dentro de uma mesma conexão, multiplexação (<em>non blocking</em>). Cada <em>stream</em> é identificado e vinculado a uma determinado recurso, <em>file</em>. O <em>modus operandi</em> é binário ao contrário da forma textual do HTTP/1.1.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/http2-multiplexed-connection.png" alt="HTTP/2: Conexão multiplexada"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>HTTP/2: Conexão multiplexada</em><sup><a href="#2">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>Os <em>frames</em> compõem os <em>streams</em> presentes no <em>Requests</em> e <em>Responses</em>. São similares ao <em>TCP packets</em>. Quando recebido todos os <em>frames</em> a mensagem HTTP pode ser reconstruída por completo.<sup><a href="#2">2</a></sup></p>
+<h2 id="frames">Frames</h2>
+<p>O frame é composto de 6 partes sendo as primeiras 5 do <em>header</em>: <em>Length</em>, <em>Type</em>, <em>Flags</em>, <em>Reserved Bit</em> e <em>Stream Identifier</em>; E a última o <em>payload</em>, que são os dados em si da mensagem. Abaixo temos um recorte da tabela explicativa da página 121 do livro HTTP/2 in Action.<sup><a href="#2">2</a></sup></p>
+<blockquote>
+<p>Outros detalhamentos podem ser encontrados na secção 4.1 da (<a href="https://www.rfc-editor.org/rfc/rfc7540.html">RFC 7540</a>.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/frame-anatomia.png" alt="http/2 frame header format"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>HTTP/2: Frame Header Format</em><sup><a href="#2">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>A visualização e análises facilitada dos frames de uma conexão HTTP/2 pode ser realizada com ferramentas como o <em>Wireshark</em> ou <em>nghttp</em>, por exemplo. Vamos utilizar o <em>nghttp</em><sup><a href="#17">17</a></sup> para a visualiar os frames trocados ao acesso do domínio <em><a href="https://yandex.com">yandex.com</a></em>:</p>
+<pre class="hljs"><code><div>nghttp -v https://yandex.com | less
+</div></code></pre>
+<p>Temos os prints abaixo onde os frames são melhores observavéis dentro da massa de dados retornada. O <em>h2</em> sinaliza uma conexão HTTPS/2, o client na abertura da conexão realiza o envio, <em>send</em>, dos frames: <em>SETTINGS</em>, <em>PRIORITY</em> e <em>HEADERS</em>. No servidor por vez retorna os frames de resposta, <em>recv</em>, que podem atualizar os valores enviados: <em>SETTINGS</em> e <em>WINDOW_UPDATE</em>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/nghttp-yandex.com-start.png" alt="nghttp yandex.com start"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Print do início da conexão HTTP/2 (<em>h2</em>) ao domínio <em>yandex.com</em></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/nghttp-yandex.com-end.png" alt="nghttp yandex.com end"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Print do fim da conexão HTTP/2 (<em>h2</em>) ao domínio <em>yandex.com</em></td>
+</tr>
+</tbody>
+</table>
+<p>Após o recebimento dos frames do tipo <em>DATA</em> temos o encerramento dos <em>streams</em> pelo cliente ao envio do frame <em>GOAWAY</em>.</p>
+<h2 id="compara%C3%A7%C3%B5es-de-desempenho">Comparações de desempenho</h2>
+<p>Para fins didáticos de comparação, inicialmente vamos utilizar o site Tune The Web<sup><a href="#7">7</a></sup> para verificar resultados entre o HTTP/1.1 e HTTP/2. O teste aplicado<sup><a href="#8">8</a></sup> é apenas solicitar a mesma imagem 360 vezes utilizando um contador presente na <em>query</em> da URL. Iniciamos pelo HTTP/1.1 de tempo total de 61.321<em>s</em>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/tunetheweb-http-performance-site.png" alt="tunetheweb http performance test "></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Tune The Web<sup><a href="#7">7</a></sup>: HTTP Performance Test</em><sup><a href="#7">7</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>Importante realizar a inspeção pelo <em>DevTools</em> para saber se realmente as requisições foram realizadas:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/tunetheweb-http-performance-devtools.png" alt="tunetheweb http performance test devtools "></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Inspeção pelo DevTools do HTTP Performance Test</em><sup><a href="#7">7</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>Executado o mesmo teste utilizando o HTTP/2 temos 1.714<em>s</em>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/tunetheweb-http2-performance-site.png" alt="tunetheweb http performance test "></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Tune The Web<sup><a href="#7">7</a></sup>: HTTP/2 Performance Test</em><sup><a href="#7">7</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>Novamente realizado a inspeção e verificamos a presença de apenas 1 conexão no HTTP/2, enquanto que no HTTP/1.1 há pelo menos 6 conexões simultâneas:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/tunetheweb-http2-performance-devtools.png" alt="tunetheweb http performance test devtools "></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Tune The Web<sup><a href="#7">7</a></sup>: Inspeção pelo DevTools do HTTP Performance Test</em><sup><a href="#7">7</a></sup></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>No teste acima o HTTP/2 não teve ainda melhor performance devido a camanda TLS que é submetida a requisição e mensagem de resposta. Os <em>web browsers</em> utilizam preferencialmente comunicações HTTP/2 sobre TLS.</p>
+</blockquote>
+<p>O site HTTP2 Demo<sup><a href="#9">9</a></sup>, também, faz um teste bem semelhantes ao visto do Tune The Web<sup><a href="#7">7</a></sup>. Quando a página é carregada ou utilizado o botão <em>Refresh</em> na mesma é disparado uma sequência de requisições do tipo HTTP/1.1 para compor a imagem maior de exemplo constituída de outras 170 images menores.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/http2demo-site.png" alt="http2demo performance test "></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>HTTP2 Demo<sup><a href="#9">9</a></sup>: Teste comparativo de performance entre HTTP/1.1 e 2</em></td>
+</tr>
+</tbody>
+</table>
+<p>Nesta nova inspeção habilitamos para display as colunas: <em>Method</em>, <em>Protocol</em>, <em>Time</em> e <em>Connection ID</em>. Existem três pontos a ser notar nesta inspeção do DevTools, imagem abaixo:</p>
+<ul>
+<li>A coluna <em>Protocol</em> tem o valor <em>h2</em> que sinaliza que a requisição realizada é do tipo HTTP/2;</li>
+<li>A coluna <em>Connection ID</em> é o mesmo de número 477021; e</li>
+<li><em>Waterfall</em> possui uma diferença mínima de tempo entre os streams quando visto pelo conjunto de <em>Queueing</em> (retângulo branco), <em>Stalled</em> (cinza), <em>Waiting</em> (verde) e <em>Content Download</em> (azul)<sup><a href="#10">10</a></sup>.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/http2demo-devtools.png" alt="http2demo http performance test devtools "></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>HTTP2 Demo<sup><a href="#9">9</a></sup>: Inspeção pelo DevTools do HTTP Performance Test</em><sup><a href="#7">7</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h2 id="o-que-o-http2-n%C3%A3o-resolve">O que o HTTP/2 não resolve</h2>
+<ul>
+<li>Páginas Web mal estruturadas, por exemplo: com imagens gigantes, muitos arquivos CSS e JS sem uso;</li>
+<li>Serviço de backend de processamento dos dados é lento para responder requisições da Web;</li>
+<li>Falta de estratégias de uso de cache;</li>
+<li>Não uso de compactação para a transmissão de dados quando suportado pelo cliente;</li>
+<li>Quantidade enorme de <em>headers</em> sem uso de estratégias de compactação ou desnecessários; e</li>
+<li>Requisição única para um único resource, <em>file</em>. A diferença de tempo não é significativa.</li>
+</ul>
+<h2 id="recursos-para-identifica%C3%A7%C3%A3o-de-suporte-ao-http2">Recursos para Identificação de suporte ao HTTP/2</h2>
+<ul>
+<li>HTTP Dev: <a href="https://http.dev/2/test">https://http.dev/2/test</a></li>
+<li>KeyCDN: <a href="https://tools.keycdn.com/http2-test">https://tools.keycdn.com/http2-test</a></li>
+<li>HTTP2 Pro: <a href="https://http2.pro">https://http2.pro</a></li>
+<li>HTTP <em>Header Upgrade</em>, exemplo pela CLI (curl<sup><a href="#11">11</a></sup>) onde é realizado uma requisição HTTP/1.1, porém o servidor informa no <em>header response</em> que suporta o HTTP/2 (<em>Upgrade: h2,h2c</em>):</li>
+</ul>
+<pre class="hljs"><code><div>curl -kvo /dev/null --http1.1 -L https://debian.org
+</div></code></pre>
+<p><em>Response:</em></p>
+<pre class="hljs"><code><div>...
+&lt; HTTP/1.1 200 OK
+&lt; Date: Wed, 10 Apr 2024 03:05:06 GMT
+&lt; Server: Apache
+&lt; Content-Location: index.en.html
+&lt; Vary: negotiate,accept-language,Accept-Encoding,cookie
+&lt; TCN: choice
+&lt; X-Content-Type-Options: nosniff
+&lt; X-Frame-Options: sameorigin
+&lt; Referrer-Policy: no-referrer
+&lt; X-Xss-Protection: 1
+&lt; Permissions-Policy: interest-cohort=()
+&lt; Strict-Transport-Security: max-age=15552000
+&lt; Upgrade: h2,h2c
+&lt; Connection: Upgrade
+...
+</div></code></pre>
+<blockquote>
+<p>Poderíamos usar a opção <em>--http2</em> no curl em um outro domínio qualquer e haveria resposta como <em>HTTP/1.1 200 OK</em> no <em>header response</em> em caso de não suporte ao HTTP/2.</p>
+</blockquote>
+<h2 id="implementa%C3%A7%C3%B5es">Implementações</h2>
+<p>No Github do IETF HTTP Working Group<sup><a href="#12">12</a></sup> temos o repositório <em>http2-spec</em><sup><a href="#13">13</a></sup> que trata das implementações do HTTP/2, além de outras <em>tools</em><sup><a href="#14">14</a></sup> que poderão nos auxiliar em demais testes:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/httpwg-impl-github.png" alt="httpwg impls github"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">*HTTP WG Implementations<sup><a href="#13">13</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h2 id="conformidade">Conformidade</h2>
+<p>Independentemente da escolha da implementação escolhida sempre é necessário que possamos realizar verificações se está conforme descrito nas RFCs, além é claro de demais teste de integração e navegação.</p>
+<p>E uma ferramenta, em especial, citada no repositório <em>http2-spec</em><sup><a href="#13">13</a></sup> que possa nos ajudar a realizar estas verifcações é a <em>h2spec</em><sup><a href="#15">15</a></sup>. Podemos realizar o <em>build</em> ou baixar uma versão pronta, <em>release</em>.</p>
+<p>Na CLI executamos o comando:</p>
+<pre class="hljs"><code><div>./h2spec -t -k -S -h apache.org -p 443
+</div></code></pre>
+<p>Como visto no resultado abaixo a implementação HTTP/2 no <em>httpd</em><sup><a href="#16">16</a></sup> no domínio raíz da Apache teve ótimo desempenho, apenas 1 um teste dos 147:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="imgs/h2spec-apache.org-test.png" alt="h2spec apache.org test"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">H2spec Test<sup><a href="#15">15</a></sup> sobre o domínio apache.org</td>
+</tr>
+</tbody>
+</table>
+<br />
+<p><a href="#htpt2-performance">#Início do doc</a><br /></p>
+<p><font size="2">Este doc foi construído utilizando <a href="https://www.markdownguide.org/">Markdown</a>.</font></p>
+<p><strong>FliSol 2024. HTTP/2: +Performance. @eduardoenemark</strong>.</p>
+<hr>
+<p><span id="1">1</span>. <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Evolution_of_HTTP">https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Evolution_of_HTTP</a>
+<span id="2">2</span>. HTTP/2 in Action, Barry Pollard. Manning Publications, 2019.
+<span id="3">3</span>. <a href="https://httparchive.org/reports/state-of-the-web">https://httparchive.org/reports/state-of-the-web</a>
+<span id="4">4</span>. <a href="https://w3techs.com/technologies/details/ce-http2">https://w3techs.com/technologies/details/ce-http2</a>
+<span id="5">5</span>. <a href="https://caniuse.com/?search=http2">https://caniuse.com/?search=http2</a>
+<span id="6">6</span>. HTTP: The Definitive Guide, David Gourley &amp; Brian Totty. O'Reilly, 2002.
+<span id="7">7</span>. <a href="https://www.tunetheweb.com/performance-test-360">https://www.tunetheweb.com/performance-test-360</a>
+<span id="8">8</span>. Testes realizados entre 08/04 a 09/04/2024.
+<span id="9">9</span>. <a href="https://http2demo.io">https://http2demo.io</a>
+<span id="10">10</span>. <a href="https://developer.chrome.com/docs/devtools/network/reference/?utm_source=devtools#timing-explanation">https://developer.chrome.com/docs/devtools/network/reference/?utm_source=devtools#timing-explanation</a>
+<span id="11">11</span>. <a href="https://curl.se/docs/manpage.html">https://curl.se/docs/manpage.html</a>
+<span id="12">12</span>. <a href="https://github.com/httpwg">https://github.com/httpwg</a>
+<span id="13">13</span>. <a href="https://github.com/httpwg/http2-spec/wiki/Implementations">https://github.com/httpwg/http2-spec/wiki/Implementations</a>
+<span id="14">14</span>. <a href="https://github.com/httpwg/http2-spec/wiki/Tools">https://github.com/httpwg/http2-spec/wiki/Tools</a>
+<span id="15">15</span>. <a href="https://github.com/summerwind/h2spec">https://github.com/summerwind/h2spec</a>
+<span id="16">16</span>. <a href="https://httpd.apache.org">https://httpd.apache.org</a>
+<span id="17">17</span>. <a href="https://nghttp2.org">https://nghttp2.org</a>
+<span id="18">18</span>. https://httpwg.org/specs/rfc7540.html</p>
+
+</body>
+</html>
