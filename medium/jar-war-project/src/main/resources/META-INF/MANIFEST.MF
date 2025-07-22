@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Implementation-Title: jar-and-war
+Implementation-Vendor: br.com.eduardenemark
+Implementation-Version: 1.0-SNAPSHOT
+Built-By: eduardoenemark
+Created-By: 25.3 (Oracle Corporation)
+Build-Jdk-Spec: 8
+Main-Class: br.com.eduardenemark.Application
