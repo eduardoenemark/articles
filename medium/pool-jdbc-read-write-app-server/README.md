@@ -1,0 +1,1 @@
+Example project about separation of datasource  the of type "write" and "read" accordingly with operation type by custom annotation.
