@@ -115,6 +115,7 @@ public class BeansConfiguration {
         return routingDataSource;
     }
 
+    @Primary
     @Bean(name = READ_HIBERNATE)
     @ConfigurationProperties("datasource.pool.read")
     public Properties readHibernate() {
@@ -151,14 +152,14 @@ public class BeansConfiguration {
         return em;
     }
 
-    @Bean(name = {READ_ENTITY_MANAGER_FACTORY})
+    @Primary
+    @Bean(name = {READ_ENTITY_MANAGER_FACTORY, "entityManagerFactory"})
     public LocalContainerEntityManagerFactoryBean readEntityManagerFactory(@Qualifier(ROUTING_DATASOURCE) DataSource dataSource,
                                                                            @Qualifier(READ_HIBERNATE) Properties hibernateProperties) {
         return this.entityManagerFactory(dataSource, hibernateProperties);
     }
 
-    @Primary
-    @Bean(name = {WRITE_ENTITY_MANAGER_FACTORY, "entityManagerFactory"})
+    @Bean(name = {WRITE_ENTITY_MANAGER_FACTORY})
     public LocalContainerEntityManagerFactoryBean writeEntityManagerFactory(@Qualifier(ROUTING_DATASOURCE) DataSource dataSource,
                                                                             @Qualifier(WRITE_HIBERNATE) Properties hibernateProperties) {
         return this.entityManagerFactory(dataSource, hibernateProperties);

@@ -50,23 +50,28 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
     @Override
     public TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException {
         OperationType type = getCurrentOperationType();
+        LOGGER.debug("Getting transaction is read only {} for operation type {}", definition.isReadOnly(), type);
         return transactionManagers.get(type).getTransaction(definition);
     }
 
     @Override
     public void commit(TransactionStatus status) {
         OperationType type = getCurrentOperationType();
+        LOGGER.debug("Committing transaction for operation type {}", type);
         if (OperationType.WRITE.equals(type)) {
             transactionManagers.get(type).commit(status);
+        } else if (OperationType.READ.equals(type)) {
+            LOGGER.debug("Not allowed to commit transaction for read operation");
+        } else {
+            LOGGER.debug("Operation type unknown");
         }
     }
 
     @Override
     public void rollback(TransactionStatus status) {
         OperationType type = getCurrentOperationType();
-        if (OperationType.WRITE.equals(type)) {
-            transactionManagers.get(type).rollback(status);
-        }
+        LOGGER.debug("Rolling back transaction for operation type {}", type);
+        transactionManagers.get(type).rollback(status);
     }
 
     public static void setOperationType(OperationType type) {
@@ -74,7 +79,7 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
     }
 
     public static OperationType getCurrentOperationType() {
-        return CONTEXT.get() != null ? CONTEXT.get() : OperationType.WRITE;
+        return CONTEXT.get() != null ? CONTEXT.get() : OperationType.READ;
     }
 
     public RoutingPlatformTransactionManager add(OperationType type, PlatformTransactionManager transactionManager) {

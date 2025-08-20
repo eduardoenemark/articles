@@ -18,7 +18,7 @@ public class RoutingDataSource extends AbstractRoutingDataSource {
         }
 
         public static OperationType get() {
-            return CONTEXT.get() != null ? CONTEXT.get() : OperationType.WRITE;
+            return CONTEXT.get() != null ? CONTEXT.get() : OperationType.READ;
         }
 
         public static void reset() {
