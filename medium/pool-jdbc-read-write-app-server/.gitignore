@@ -34,6 +34,8 @@ build/
 
 ### Logs ###
 logs/**
+*.log
+*.lck
 
 ### Data ###
 pgdata/**
