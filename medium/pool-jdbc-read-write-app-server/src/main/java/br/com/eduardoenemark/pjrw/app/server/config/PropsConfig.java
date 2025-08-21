@@ -33,14 +33,15 @@ public class PropsConfig {
         @FieldDefaults(level = AccessLevel.PROTECTED)
         public static class PoolPropsConfig {
             String name;
-            int minimumSize;
-            int maximumSize;
-            int minimumIdle;
-            int borrowConnectionTimeoutSecs;
-            int maxIdleTimeSecs;
-            int initializationFailTimeoutSecs;
+            Boolean autocommit;
+            Boolean readOnly;
+            Integer minimumSize;
+            Integer maximumSize;
+            Integer minimumIdle;
+            Integer borrowConnectionTimeoutSecs;
+            Integer maxIdleTimeSecs;
+            Integer initializationFailTimeoutSecs;
             String connectionTestQuery;
-            boolean readOnly;
         }
 
         @Setter
@@ -48,19 +49,19 @@ public class PropsConfig {
         @ToString
         @FieldDefaults(level = AccessLevel.PROTECTED)
         public static class HibernatePropsConfig {
-            boolean showSql;
-            boolean formatSql;
+            Boolean showSql;
+            Boolean formatSql;
             String dialect;
             String defaultSchema;
-            boolean generateStatistics;
+            Boolean generateStatistics;
             String hbm2ddlAuto;
-            boolean connectionProviderDisablesAutocommit;
-            boolean connectionAutocommit;
+            Boolean connectionProviderDisablesAutocommit;
+            Boolean connectionAutocommit;
             String connectionReleaseMode;
-            boolean jpaComplianceTransaction;
-            boolean jpaComplianceClosed;
-            boolean transactionFlushBeforeCompletion;
-            boolean transactionAutoCloseSession;
+            Boolean jpaComplianceTransaction;
+            Boolean jpaComplianceClosed;
+            Boolean transactionFlushBeforeCompletion;
+            Boolean transactionAutoCloseSession;
         }
 
         @ToString

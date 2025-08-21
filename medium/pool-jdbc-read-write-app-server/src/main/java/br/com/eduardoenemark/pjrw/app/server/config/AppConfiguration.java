@@ -1,6 +1,7 @@
 package br.com.eduardoenemark.pjrw.app.server.config;
 
 import br.com.eduardoenemark.pjrw.app.server.entity.Product;
+import br.com.eduardoenemark.pjrw.app.server.intercept.RequestDurationInterceptor;
 import br.com.eduardoenemark.pjrw.app.server.operation.OperationType;
 import br.com.eduardoenemark.pjrw.app.server.repository.ProductRepository;
 import br.com.eduardoenemark.pjrw.app.server.routing.RoutingDataSource;
@@ -29,6 +30,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
@@ -41,9 +44,9 @@ import java.util.Properties;
 @EnableWebMvc
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "br.com.eduardoenemark.pjrw.app.server.repository")
-public class BeansConfiguration {
+public class AppConfiguration {
 
-    public static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BeansConfiguration.class.getPackage().getName());
+    public static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AppConfiguration.class.getPackage().getName());
 
     public static final String READ_TRANSACTION_MANAGER = "readTransactionManager";
     public static final String WRITE_TRANSACTION_MANAGER = "writeTransactionManager";
@@ -57,6 +60,17 @@ public class BeansConfiguration {
 
     public static final String READ_ENTITY_MANAGER_FACTORY = "readEntityManagerFactory";
     public static final String WRITE_ENTITY_MANAGER_FACTORY = "writeEntityManagerFactory";
+
+    @Configuration
+    public static class WebConfig implements WebMvcConfigurer {
+
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+            registry.addInterceptor(new RequestDurationInterceptor())
+                    .addPathPatterns("/**");
+        }
+    }
+
 
     @Bean(name = READ_DATASOURCE)
     public DataSource readDataSource(PropsConfig.DataSourcePropsConfig dataSourcePropsConfig,
@@ -74,8 +88,8 @@ public class BeansConfiguration {
         dataSource.setInitializationFailTimeout(poolReadPropsConfig.getInitializationFailTimeoutSecs() * 1000L); // Convert to milliseconds
         dataSource.setConnectionTestQuery(poolReadPropsConfig.getConnectionTestQuery());
         dataSource.setPoolName(poolReadPropsConfig.getName());
-        dataSource.setAutoCommit(false);
-        dataSource.setReadOnly(true);
+        dataSource.setAutoCommit(poolReadPropsConfig.getAutocommit());
+        dataSource.setReadOnly(poolReadPropsConfig.getReadOnly());
         return dataSource;
     }
 
@@ -94,9 +108,9 @@ public class BeansConfiguration {
         dataSource.setBorrowConnectionTimeout(poolWritePropsConfig.getBorrowConnectionTimeoutSecs() * 1000); // Convert to milliseconds
         dataSource.setMaxIdleTime(poolWritePropsConfig.getMaxIdleTimeSecs() * 1000); // Convert to milliseconds
         dataSource.setTestQuery(poolWritePropsConfig.getConnectionTestQuery());
+        dataSource.setReadOnly(poolWritePropsConfig.getReadOnly());
+        dataSource.setLocalTransactionMode(poolWritePropsConfig.getAutocommit());
         dataSource.setIgnoreJtaTransactions(true);
-        dataSource.setReadOnly(false);
-        dataSource.setLocalTransactionMode(true);
         return dataSource;
     }
 
