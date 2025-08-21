@@ -42,6 +42,7 @@
         <atomikos.version>6.0.0</atomikos.version>
         <hikaricp.version>4.0.3</hikaricp.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
+        <postgresql.version>42.7.7</postgresql.version>
     </properties>
     <dependencies>
         <!-- spring -->
@@ -75,6 +76,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- hibernate -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
         <!-- atomikos -->
         <dependency>
             <groupId>com.atomikos</groupId>
@@ -94,7 +100,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.7</version>
+            <version>${postgresql.version}</version>
         </dependency>
         <!-- HikariCP -->
         <dependency>
