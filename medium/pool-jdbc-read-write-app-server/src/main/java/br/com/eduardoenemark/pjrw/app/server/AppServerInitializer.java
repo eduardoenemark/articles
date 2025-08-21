@@ -13,9 +13,9 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
                 "br.com.eduardoenemark.pjrw.app.server.routing",
                 "br.com.eduardoenemark.pjrw.app.server.service"},
         exclude = {DataSourceAutoConfiguration.class})
-public class AppServerApplication extends SpringBootServletInitializer {
+public class AppServerInitializer extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(AppServerApplication.class, args);
+        SpringApplication.run(AppServerInitializer.class, args);
     }
 }
