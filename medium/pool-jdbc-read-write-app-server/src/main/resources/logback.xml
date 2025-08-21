@@ -6,7 +6,7 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/myapp.log</file>
+        <file>pjrw-app-server.log</file>
         <append>true</append>
         <encoder>
             <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %X{mdcId} %logger{36} - %msg%n</pattern>
