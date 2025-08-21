@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
-import static br.com.eduardoenemark.pjrw.app.server.config.BeansConfiguration.LOGGER;
+import static br.com.eduardoenemark.pjrw.app.server.config.AppConfiguration.LOGGER;
 
 @Aspect
 @Component
