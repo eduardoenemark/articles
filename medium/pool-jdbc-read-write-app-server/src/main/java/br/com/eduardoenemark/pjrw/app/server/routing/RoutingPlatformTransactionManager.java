@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-import static br.com.eduardoenemark.pjrw.app.server.config.BeansConfiguration.LOGGER;
+import static br.com.eduardoenemark.pjrw.app.server.config.AppConfiguration.LOGGER;
 
 public class RoutingPlatformTransactionManager implements PlatformTransactionManager {
 
@@ -39,6 +39,7 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
     public static void unbindResources() {
         LOGGER.debug("Unbinding resources. Actual transaction active: {}", TransactionSynchronizationManager.isActualTransactionActive());
         if (!TransactionSynchronizationManager.isActualTransactionActive()) {
+            CONTEXT.remove();
             TransactionSynchronizationManager.unbindResource(OperationType.class);
             TransactionSynchronizationManager.unbindResource(DataSource.class);
             TransactionSynchronizationManager.unbindResource(RoutingDataSource.class);
@@ -61,7 +62,9 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
         if (OperationType.WRITE.equals(type)) {
             transactionManagers.get(type).commit(status);
         } else if (OperationType.READ.equals(type)) {
-            LOGGER.debug("Not allowed to commit transaction for read operation");
+            LOGGER.debug("Not allowed to commit transaction for read operation. Making rollback...");
+            status.setRollbackOnly();
+            rollback(status);
         } else {
             LOGGER.debug("Operation type unknown");
         }
