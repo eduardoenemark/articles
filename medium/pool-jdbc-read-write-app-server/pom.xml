@@ -38,7 +38,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <start-class>br.com.eduardoenemark.pjrw.app.server.AppServerApplication</start-class>
+        <start-class>br.com.eduardoenemark.pjrw.app.server.AppServerInitializer</start-class>
         <atomikos.version>6.0.0</atomikos.version>
         <hikaricp.version>4.0.3</hikaricp.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -139,6 +139,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+        <!-- OkHttp3 dependency -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
         </dependency>
         <!-- +++ test +++ -->
         <!-- Groovy -->
