@@ -11,7 +11,8 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
                 "br.com.eduardoenemark.pjrw.app.server.repository",
                 "br.com.eduardoenemark.pjrw.app.server.resource",
                 "br.com.eduardoenemark.pjrw.app.server.routing",
-                "br.com.eduardoenemark.pjrw.app.server.service"},
+                "br.com.eduardoenemark.pjrw.app.server.service",
+                "br.com.eduardoenemark.pjrw.app.server.event"},
         exclude = {DataSourceAutoConfiguration.class})
 public class AppServerInitializer extends SpringBootServletInitializer {
 
