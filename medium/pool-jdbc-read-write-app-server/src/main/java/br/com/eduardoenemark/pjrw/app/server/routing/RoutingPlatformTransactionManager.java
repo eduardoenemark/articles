@@ -1,6 +1,8 @@
 package br.com.eduardoenemark.pjrw.app.server.routing;
 
 import br.com.eduardoenemark.pjrw.app.server.operation.OperationType;
+import lombok.Getter;
+import lombok.val;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -16,9 +18,10 @@ import static br.com.eduardoenemark.pjrw.app.server.config.AppConfiguration.LOGG
 
 public class RoutingPlatformTransactionManager implements PlatformTransactionManager {
 
+    @Getter
+    private static final ThreadLocal<OperationContext> threadLocalContext = new ThreadLocal<>();
     private static final Map<OperationType, PlatformTransactionManager> transactionManagers = new HashMap<>();
     private static final Map<OperationType, LocalContainerEntityManagerFactoryBean> localContainerEntityManagerFactories = new HashMap<>();
-    private static final ThreadLocal<OperationType> CONTEXT = new ThreadLocal<>();
     private static RoutingDataSource routingDataSource;
 
     // Set context BEFORE transaction starts
@@ -26,7 +29,7 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
         LOGGER.debug("Binding resources for operation type {}", type);
         if (!TransactionSynchronizationManager.isActualTransactionActive()) {
             LOGGER.debug("No active transaction found, binding resources for operation type {}", type);
-            setOperationType(type);
+            startOperationContext(type);
             TransactionSynchronizationManager.bindResource(OperationType.class, type);
             TransactionSynchronizationManager.bindResource(DataSource.class, routingDataSource);
             TransactionSynchronizationManager.bindResource(RoutingDataSource.class, routingDataSource);
@@ -39,7 +42,7 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
     public static void unbindResources() {
         LOGGER.debug("Unbinding resources. Actual transaction active: {}", TransactionSynchronizationManager.isActualTransactionActive());
         if (!TransactionSynchronizationManager.isActualTransactionActive()) {
-            CONTEXT.remove();
+            endOperationContext();
             TransactionSynchronizationManager.unbindResource(OperationType.class);
             TransactionSynchronizationManager.unbindResource(DataSource.class);
             TransactionSynchronizationManager.unbindResource(RoutingDataSource.class);
@@ -77,12 +80,30 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
         transactionManagers.get(type).rollback(status);
     }
 
-    public static void setOperationType(OperationType type) {
-        CONTEXT.set(type);
+    public static void startOperationContext(OperationType type) {
+        val context = new OperationContext();
+        context.start(type);
+        threadLocalContext.set(context);
+    }
+
+    public static void endOperationContext() {
+        val context = threadLocalContext.get();
+        if (context != null) {
+            context.end();
+        }
+    }
+
+    public static void reset() {
+        val context = threadLocalContext.get();
+        if (context != null) {
+            threadLocalContext.remove();
+        }
     }
 
     public static OperationType getCurrentOperationType() {
-        return CONTEXT.get() != null ? CONTEXT.get() : OperationType.READ;
+        return threadLocalContext.get() != null && threadLocalContext.get().getOperationType() != null
+                ? threadLocalContext.get().getOperationType()
+                : OperationType.READ;
     }
 
     public RoutingPlatformTransactionManager add(OperationType type, PlatformTransactionManager transactionManager) {
