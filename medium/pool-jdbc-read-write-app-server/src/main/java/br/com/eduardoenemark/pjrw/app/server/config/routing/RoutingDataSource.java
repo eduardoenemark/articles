@@ -1,4 +1,4 @@
-package br.com.eduardoenemark.pjrw.app.server.routing;
+package br.com.eduardoenemark.pjrw.app.server.config.routing;
 
 import br.com.eduardoenemark.pjrw.app.server.operation.OperationType;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;

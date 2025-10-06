@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.1.0</version> <!-- Updated to Spring Boot 3 -->
         <relativePath/>
     </parent>
     <groupId>br.com.eduardoenemark</groupId>
@@ -33,21 +33,34 @@
         </developer>
     </developers>
     <properties>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <start-class>br.com.eduardoenemark.pjrw.app.server.AppServerApplication</start-class>
+        <java.version>17</java.version> <!-- Updated to Java 17 -->
+        <maven.compiler.source>17</maven.compiler.source> <!-- Updated to Java 17 -->
+        <maven.compiler.target>17</maven.compiler.target> <!-- Updated to Java 17 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <start-class>br.com.eduardoenemark.pjrw.app.server.AppServerApplication</start-class>
         <atomikos.version>6.0.0</atomikos.version>
-        <hikaricp.version>4.0.3</hikaricp.version>
+        <hikaricp.version>7.0.2</hikaricp.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
+        <postgresql.version>42.7.7</postgresql.version>
+        <javafaker.version>1.0.2</javafaker.version>
+        <lombok.version>1.18.38</lombok.version>
+        <springdoc-openapi-ui.version>1.8.0</springdoc-openapi-ui.version>
+        <!--        <spock.version>2.4-M6-groovy-4.0</spock.version>-->
+        <!--        <groovy.version>5.0.1</groovy.version>-->
+        <!--        <gmavenplus.plugin.version>4.2.1</gmavenplus.plugin.version>-->
+        <transaction-api.version>2.0.1</transaction-api.version>
+        <testcontainers.version>1.21.3</testcontainers.version>
     </properties>
     <dependencies>
         <!-- spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -71,30 +84,24 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <!-- atomikos -->
-        <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-jta</artifactId>
-            <version>${atomikos.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-jdbc</artifactId>
-            <version>${atomikos.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-actuator</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-spring-boot3-starter</artifactId>
+            <version>${atomikos.version}</version>
         </dependency>
         <!-- jdbc -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.7</version>
+            <version>${postgresql.version}</version>
         </dependency>
         <!-- HikariCP -->
         <dependency>
@@ -106,18 +113,18 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.38</version>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
-            <version>1.0.2</version>
+            <version>${javafaker.version}</version>
         </dependency>
         <!-- Spring Doc -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.8.0</version>
+            <version>${springdoc-openapi-ui.version}</version>
         </dependency>
         <!-- Jackson -->
         <dependency>
@@ -135,31 +142,57 @@
             <version>${commons-lang3.version}</version>
         </dependency>
         <!-- +++ test +++ -->
-        <!-- Groovy -->
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>4.0.9</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
+        <!-- Groovy-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.groovy</groupId>-->
+        <!--            <artifactId>groovy-all</artifactId>-->
+        <!--            <version>${groovy.version}</version>-->
+        <!--            <type>pom</type>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <!-- Spock -->
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>2.4-M1-groovy-4.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-spring</artifactId>
-            <version>2.4-M1-groovy-4.0</version>
-            <scope>test</scope>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.spockframework</groupId>-->
+        <!--            <artifactId>spock-core</artifactId>-->
+        <!--            <version>${spock.version}</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.spockframework</groupId>-->
+        <!--            <artifactId>spock-spring</artifactId>-->
+        <!--            <version>${spock.version}</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <!-- Spring Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- PostgreSQL Testcontainer -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- JUnit Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -182,7 +215,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.38</version>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                     <target>${maven.compiler.target}</target>
@@ -192,11 +225,11 @@
                     </includes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>4.2.0</version>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.codehaus.gmavenplus</groupId>-->
+            <!--                <artifactId>gmavenplus-plugin</artifactId>-->
+            <!--                <version>${gmavenplus.plugin.version}</version>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

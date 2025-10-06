@@ -1,4 +1,4 @@
-package br.com.eduardoenemark.pjrw.app.server.routing;
+package br.com.eduardoenemark.pjrw.app.server.config.routing;
 
 import br.com.eduardoenemark.pjrw.app.server.operation.OperationType;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -32,6 +32,8 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
             TransactionSynchronizationManager.bindResource(RoutingDataSource.class, routingDataSource);
             TransactionSynchronizationManager.bindResource(RoutingPlatformTransactionManager.class, transactionManagers.get(type));
             TransactionSynchronizationManager.bindResource(LocalContainerEntityManagerFactoryBean.class, localContainerEntityManagerFactories.get(type));
+        } else {
+            LOGGER.debug("Active transaction found, skipping binding resources for operation type {}", type);
         }
     }
 
@@ -44,6 +46,8 @@ public class RoutingPlatformTransactionManager implements PlatformTransactionMan
             TransactionSynchronizationManager.unbindResource(RoutingDataSource.class);
             TransactionSynchronizationManager.unbindResource(RoutingPlatformTransactionManager.class);
             TransactionSynchronizationManager.unbindResource(LocalContainerEntityManagerFactoryBean.class);
+        } else {
+            LOGGER.debug("Active transaction found, skipping unbinding resources");
         }
     }
 

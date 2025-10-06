@@ -4,7 +4,6 @@ import br.com.eduardoenemark.pjrw.app.server.operation.annotation.ReadOperation;
 import br.com.eduardoenemark.pjrw.app.server.operation.annotation.WriteOperation;
 import br.com.eduardoenemark.pjrw.app.server.entity.Product;
 import br.com.eduardoenemark.pjrw.app.server.service.ProductService;
-import com.github.javafaker.Faker;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
@@ -12,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
+
+import static br.com.eduardoenemark.pjrw.app.server.service.ProductService.fakeProduct;
 
 @RestController
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -74,26 +73,15 @@ public class ProductResource {
 
     @GetMapping("/product/generate")
     public ResponseEntity<Product> generate() {
-        return ResponseEntity.ok(generateFakeProduct());
+        return ResponseEntity.ok(fakeProduct());
     }
 
     @WriteOperation
     @PostMapping("/product/generate-and-save")
     public ResponseEntity<Product> generateAndSave() {
-        val saved = this.service.save(generateFakeProduct());
+        val saved = this.service.save(fakeProduct());
         return ResponseEntity.ok(saved);
     }
 
-    protected Product generateFakeProduct() {
-        val faker = new Faker();
-        return new Product()
-                .setId(null)
-                .setName(faker.commerce().productName())
-                .setPrice(BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100)))
-                .setAmount(faker.number().numberBetween(1, 1000))
-                .setCountry(faker.address().countryCode())
-                .setUniversalProductCode(faker.code().ean8())
-                .setEntryDate(LocalDate.now())
-                .setProducer(faker.company().name());
-    }
+
 }

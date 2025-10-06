@@ -8,10 +8,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication(
         scanBasePackages = {
                 "br.com.eduardoenemark.pjrw.app.server.config",
+                "br.com.eduardoenemark.pjrw.app.server.config.routing",
                 "br.com.eduardoenemark.pjrw.app.server.repository",
-                "br.com.eduardoenemark.pjrw.app.server.resource",
-                "br.com.eduardoenemark.pjrw.app.server.routing",
-                "br.com.eduardoenemark.pjrw.app.server.service"},
+                "br.com.eduardoenemark.pjrw.app.server.service",
+                "br.com.eduardoenemark.pjrw.app.server.resource"},
         exclude = {DataSourceAutoConfiguration.class})
 public class AppServerApplication extends SpringBootServletInitializer {
 
