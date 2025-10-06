@@ -36,6 +36,7 @@ build/
 logs/**
 *.log
 *.lck
+src/main/non-package-resources/*.log
 
 ### Data ###
 pgdata/**

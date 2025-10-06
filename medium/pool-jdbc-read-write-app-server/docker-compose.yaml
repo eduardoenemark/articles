@@ -10,5 +10,12 @@ services:
       - POSTGRES_DB=postgres
     ports:
       - "5432:5432"
+    command: >
+      bash -c "
+        mkdir -p ${HOME}/pgdata &&
+        chmod 700 ${HOME}/pgdata &&
+        exec docker-entrypoint.sh postgres
+      "
     volumes:
-      - "./pgdata:/var/lib/postgresql/data"
+      - "${HOME}/pgdata:/root/pgdata"
+      - "${HOME}/pgdata:/var/lib/postgresql/data"
