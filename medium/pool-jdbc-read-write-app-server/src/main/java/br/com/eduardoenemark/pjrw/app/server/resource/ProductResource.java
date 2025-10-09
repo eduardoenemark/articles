@@ -37,7 +37,7 @@ public class ProductResource {
     @WriteOperation
     @DeleteMapping("/product/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        service.delete(id);
+        service.deleteById(id);
         return ResponseEntity.ok().build();
     }
 

@@ -3,6 +3,8 @@ package br.com.eduardoenemark.pjrw.app.server.config.routing;
 import br.com.eduardoenemark.pjrw.app.server.operation.OperationType;
 import lombok.Getter;
 import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -14,9 +16,9 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-import static br.com.eduardoenemark.pjrw.app.server.config.AppConfiguration.LOGGER;
-
 public class RoutingPlatformTransactionManager implements PlatformTransactionManager {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(RoutingPlatformTransactionManager.class.getName());
 
     @Getter
     private static final ThreadLocal<OperationContext> threadLocalContext = new ThreadLocal<>();

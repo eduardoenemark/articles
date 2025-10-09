@@ -47,7 +47,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         repository.deleteById(id);
     }
 

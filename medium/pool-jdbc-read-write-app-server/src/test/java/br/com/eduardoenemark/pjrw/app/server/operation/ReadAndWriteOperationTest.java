@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -52,12 +53,15 @@ public class ReadAndWriteOperationTest {
     @Qualifier("writeTransactionTemplate")
     TransactionTemplate writeTransactionTemplate;
 
+    @Autowired
+    ApplicationContext context;
+
     @Container
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:18-alpine")
             .withDatabaseName("postgres")
             .withUsername("postgres")
             .withPassword("123456")
-            .withInitScript("ddl-dml-init.sql");
+            .withInitScript("ddl-init.sql");
 
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
@@ -80,7 +84,7 @@ public class ReadAndWriteOperationTest {
     @Test
     @Order(0)
     public void countEqualToZero() {
-        readOperationInNewThread(() -> {
+        executeReadOperation(() -> {
             val count = productService.count();
             assertEquals(0, count);
         });
@@ -89,7 +93,7 @@ public class ReadAndWriteOperationTest {
     @Test
     @Order(1)
     public void insertProduct() {
-        writeOperationInNewThread(() -> {
+        executeWriteOperation(() -> {
             val saved = productService.save(ProductService.fakeProduct());
             assertEquals(1, saved.getId());
         });
@@ -98,7 +102,7 @@ public class ReadAndWriteOperationTest {
     @Test
     @Order(2)
     public void insertAndCountProduct() {
-        writeOperationInNewThread(() -> {
+        executeWriteOperation(() -> {
             val saved = productService.save(ProductService.fakeProduct());
             Assertions.assertTrue(saved.getId() > 1);
             val count = productService.count();
@@ -109,7 +113,7 @@ public class ReadAndWriteOperationTest {
     @Test
     @Order(3)
     public void writeInReadOperation() {
-        readOperationInNewThread(() -> {
+        executeReadOperation(() -> {
             Assertions.assertThrows(
                     Exception.class,
                     () -> productService.save(ProductService.fakeProduct()));
@@ -119,7 +123,7 @@ public class ReadAndWriteOperationTest {
     @Test
     @Order(4)
     public void commitInTransactionTemplateAndRollback() {
-        writeOperationInNewThread(() -> {
+        executeWriteOperation(() -> {
             val p1 = productService.findById(1);
             p1.setName("Name01");
             productService.save(p1);
@@ -127,6 +131,7 @@ public class ReadAndWriteOperationTest {
             writeTransactionTemplate.executeWithoutResult(status -> {
                 p1.setName("Name02");
                 productService.save(p1);
+                status.flush();
             });
             throw new UnexpectedRollbackException("Commit between operations");
         });
@@ -134,34 +139,44 @@ public class ReadAndWriteOperationTest {
         assertEquals("Name02", p1.getName());
     }
 
+    AtomicInteger productId = new AtomicInteger();
+
+    @SneakyThrows
     @Test
     @Order(5)
     public void operationsBetweenTransactionTemplate() {
-        val productId = new AtomicInteger();
-        writeTransactionTemplate.executeWithoutResult(status -> {
+        val t1 = context.getBean("writeTransactionTemplate", TransactionTemplate.class);
+        val t2 = context.getBean("writeTransactionTemplate", TransactionTemplate.class);
+
+        t1.executeWithoutResult(status -> {
             LOGGER.info("Saving product");
             val saved = productService.save(ProductService.fakeProduct());
             productId.set(saved.getId());
+            status.flush();
         });
         assertTrue(productId.get() > 0);
 
         AtomicBoolean exists = new AtomicBoolean(false);
-        writeTransactionTemplate.executeWithoutResult(status -> {
+        t2.execute(status -> {
             val product = productService.findById(productId.get());
             LOGGER.info("Finding product with id {}: {}", productId.get(), product);
             exists.set(product != null);
+            status.flush();
+            return product;
         });
         assertTrue(exists.get());
 
-        writeTransactionTemplate.execute(status -> {
+        val t3 = context.getBean("writeTransactionTemplate", TransactionTemplate.class);
+        t3.execute(status -> {
             LOGGER.info("Deleting product with id {}", productId.get());
-            productService.delete(productId.get());
+            productService.deleteById(productId.get());
+            status.flush();
             return null;
         });
 
         LOGGER.info("Checking if product with id {} exists", productId.get());
         val productRef = new AtomicReference<Product>();
-        readOperationInNewThread(() -> {
+        executeReadOperation(() -> {
             productRef.set(productService.findById(productId.get()));
             LOGGER.info("Product with id {} exists: {}", productId.get(), productRef.get() != null);
         });
@@ -169,7 +184,7 @@ public class ReadAndWriteOperationTest {
     }
 
     @SneakyThrows
-    private void readOperationInNewThread(Runnable runnable) {
+    private void executeReadOperation(Runnable runnable) {
         val task = new Thread(() -> {
             try {
                 RoutingTransaction.readBindResources();
@@ -183,7 +198,7 @@ public class ReadAndWriteOperationTest {
     }
 
     @SneakyThrows
-    private void writeOperationInNewThread(Runnable runnable) {
+    private void executeWriteOperation(Runnable runnable) {
         val task = new Thread(() -> {
             try {
                 RoutingTransaction.writeBindResources();

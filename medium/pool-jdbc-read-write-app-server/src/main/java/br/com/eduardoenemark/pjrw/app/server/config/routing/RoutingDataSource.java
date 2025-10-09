@@ -11,18 +11,18 @@ public class RoutingDataSource extends AbstractRoutingDataSource {
     }
 
     public static class DatasourceContext {
-        private static final ThreadLocal<OperationType> CONTEXT = new ThreadLocal<>();
+        private static final ThreadLocal<OperationType> context = new ThreadLocal<>();
 
         public static void set(OperationType type) {
-            CONTEXT.set(type);
+            context.set(type);
         }
 
         public static OperationType get() {
-            return CONTEXT.get() != null ? CONTEXT.get() : OperationType.READ;
+            return context.get() != null ? context.get() : OperationType.READ;
         }
 
         public static void reset() {
-            CONTEXT.remove();
+            context.remove();
         }
     }
 }

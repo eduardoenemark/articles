@@ -7,11 +7,13 @@ import br.com.eduardoenemark.pjrw.app.server.operation.OperationType;
 import com.atomikos.icatch.jta.UserTransactionImp;
 import com.atomikos.icatch.jta.UserTransactionManager;
 import jakarta.transaction.UserTransaction;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,7 +24,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
-
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static br.com.eduardoenemark.pjrw.app.server.config.DataSourceBeansConfiguration.*;
@@ -48,30 +50,44 @@ public class TransactionManagerBeansConfiguration {
                 .add(OperationType.WRITE, writeTransactionManager);
     }
 
+    @Scope("prototype")
     @Bean(name = "writeTransactionTemplate")
     public TransactionTemplate writeTransactionTemplate(@Qualifier("transactionManager") PlatformTransactionManager platformTransactionManager) {
         val tt = new TransactionTemplate() {
+            @SneakyThrows
             @Override
             public void executeWithoutResult(Consumer<TransactionStatus> action) throws TransactionException {
-                super.executeWithoutResult(status -> {
-                    RoutingTransaction.writeBindResources();
-                    action.accept(status);
-                    status.flush();
-                    RoutingTransaction.writeUnbindResources();
+                val t = new Thread(() -> {
+                    super.executeWithoutResult(status -> {
+                        try {
+                            RoutingTransaction.writeBindResources();
+                            action.accept(status);
+                        } finally {
+                            RoutingTransaction.writeUnbindResources();
+                        }
+                    });
                 });
+                t.start();
+                t.join();
             }
 
+            @SneakyThrows
             @Override
             public <T> T execute(TransactionCallback<T> action) throws TransactionException {
-                return super.execute(status -> {
-                    try {
-                        RoutingTransaction.writeBindResources();
-                        return action.doInTransaction(status);
-                    } finally {
-                        status.flush();
-                        RoutingTransaction.writeUnbindResources();
-                    }
+                val result = new AtomicReference<T>();
+                val t = new Thread(() -> {
+                    result.set(super.execute(status -> {
+                        try {
+                            RoutingTransaction.writeBindResources();
+                            return action.doInTransaction(status);
+                        } finally {
+                            RoutingTransaction.writeUnbindResources();
+                        }
+                    }));
                 });
+                t.start();
+                t.join();
+                return result.get();
             }
         };
         tt.setName("transactionTemplate");
