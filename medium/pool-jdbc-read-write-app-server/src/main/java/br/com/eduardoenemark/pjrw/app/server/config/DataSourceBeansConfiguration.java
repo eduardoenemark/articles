@@ -66,7 +66,12 @@ public class DataSourceBeansConfiguration {
         dataSource.setIdleTimeout(poolReadPropsConfig.getMaxIdleTimeSecs() * 1000L); // Convert to milliseconds
         dataSource.setInitializationFailTimeout(poolReadPropsConfig.getInitializationFailTimeoutSecs() * 1000L); // Convert to milliseconds
         dataSource.setPoolName(poolReadPropsConfig.getName());
-        dataSource.setAutoCommit(false);
+        /* AutoCommit is ignored because:
+         * o.s.jdbc.datasource.DataSourceUtils - Could not reset JDBC Connection after transaction
+         * org.postgresql.util.PSQLException: Cannot change transaction read-only property in the middle of a transaction.
+         * at org.postgresql.jdbc.PgConnection.setReadOnly(PgConnection.java:916)
+         */
+        //dataSource.setAutoCommit(false);
         dataSource.setReadOnly(true);
         return dataSource;
     }
