@@ -5,9 +5,16 @@ import br.com.eduardoenemark.pjrw.app.server.service.ProductService;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import lombok.val;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 @Configuration
 public class BeansConfiguration {
@@ -25,6 +32,28 @@ public class BeansConfiguration {
                         .contact(new Contact()
                                 .name(contactConfig.getName())
                                 .email(contactConfig.getEmail())));
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        class CustomErrorHandler implements ResponseErrorHandler {
+
+            private final ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
+
+            @Override
+            public boolean hasError(ClientHttpResponse response) throws IOException {
+                return errorHandler.hasError(response);
+            }
+
+            @Override
+            public void handleError(ClientHttpResponse response) throws IOException {
+                // Handle the error here
+                LOGGER.debug("HTTP Status: {}", response.getStatusCode());
+            }
+        }
+        val restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(new CustomErrorHandler());
+        return restTemplate;
     }
 
     @Bean
