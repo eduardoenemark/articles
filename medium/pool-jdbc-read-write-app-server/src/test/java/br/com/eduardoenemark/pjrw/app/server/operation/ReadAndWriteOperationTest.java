@@ -1,6 +1,7 @@
 package br.com.eduardoenemark.pjrw.app.server.operation;
 
 import br.com.eduardoenemark.pjrw.app.server.AppServerApplication;
+import br.com.eduardoenemark.pjrw.app.server.config.BaseTestConfiguration;
 import br.com.eduardoenemark.pjrw.app.server.config.routing.RoutingTransaction;
 import br.com.eduardoenemark.pjrw.app.server.entity.Product;
 import br.com.eduardoenemark.pjrw.app.server.service.ProductService;
@@ -15,15 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @Rollback(false)
-@Testcontainers
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = AppServerApplication.class,
@@ -42,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-public class ReadAndWriteOperationTest {
+public class ReadAndWriteOperationTest extends BaseTestConfiguration {
 
     public static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReadAndWriteOperationTest.class.getName());
 
@@ -55,31 +50,6 @@ public class ReadAndWriteOperationTest {
 
     @Autowired
     ApplicationContext context;
-
-    @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:18-alpine")
-            .withDatabaseName("postgres")
-            .withUsername("postgres")
-            .withPassword("123456")
-            .withInitScript("ddl-init.sql");
-
-    @DynamicPropertySource
-    static void datasourceProperties(DynamicPropertyRegistry registry) {
-        registry.add("datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("datasource.username", POSTGRES::getUsername);
-        registry.add("datasource.password", POSTGRES::getPassword);
-    }
-
-    @BeforeAll
-    public static void beforeAll() {
-        //Start Postgres container.
-        POSTGRES.start();
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        POSTGRES.stop();
-    }
 
     @Test
     @Order(0)
