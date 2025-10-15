@@ -2,10 +2,7 @@ package br.com.eduardoenemark.pjrw.app.server.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import jakarta.persistence.*;
@@ -15,6 +12,7 @@ import java.time.LocalDate;
 
 @Setter
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
