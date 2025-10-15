@@ -40,3 +40,7 @@ src/main/non-package-resources/*.log
 
 ### Data ###
 pgdata/**
+
+### Others ###
+combined_files.md
+*.gz
